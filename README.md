@@ -1,10 +1,10 @@
-#Public libraries for Cliengo Platform
+# Public libraries for Cliengo Platform
 
-#Scripts
+# Scripts
 - Coming soon...
 
-#Images
+# Images
 - Coming soon...
 
-#Stylesheets
+# Stylesheets
 - Coming soon...
