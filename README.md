@@ -1,3 +1,7 @@
+
+![Cliengo](https://www.cliengo.com/img/logo.png)
+
+
 # Public libraries for Cliengo Platform
 
 # Scripts
