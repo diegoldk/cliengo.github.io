@@ -18,3 +18,17 @@ if(gclid){
 } else {
 	console.log('Leadaki: no se encontró ningún gclid');
 }
+
+
+
+//Disparado automático de pixels si está el script de Leadaki
+window.instapageFormSubmitSuccess = function( form )
+{
+	console.log('Leadaki: se completó un formulario correctamente');
+	//si está leadaki instalado disparo los pixels cuanco completan el formulario
+	if (window.Leadaki && fireNewLeadPixels){
+		console.log('Leadaki: disparando pixels de conversión');
+		fireNewLeadPixels()
+	}
+
+}
