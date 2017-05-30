@@ -24,11 +24,100 @@ if(gclid){
 //Disparado automático de pixels si está el script de Leadaki
 window.instapageFormSubmitSuccess = function( form )
 {
-	console.log('Leadaki: se completó un formulario correctamente');
-	//si está leadaki instalado disparo los pixels cuanco completan el formulario
-	if (window.Leadaki && fireNewLeadPixels){
-		console.log('Leadaki: disparando pixels de conversión');
-		fireNewLeadPixels()
+	//	TODO cambiar a metodo de staticScript
+	  function ldkTrackContactFormSerialized2(formSerialized, successCallback) {
+		var dataParams = "";
+		formSerialized.forEach(function(k, s) {
+			dataParams += s + "=" + k + "&";
+		});
+
+		// TODO
+		// ldkTrackContactFormSerialized(dataParams, successCallback);
+
+		$.ajax({
+			type : 'POST',
+			url : 'https://app.cliengo.com/Siteless/contactSave',
+			data : dataParams + '&ldkCompanyId=' + Leadaki.companyId
+					+ '&ldkWebsiteId=' + Leadaki.websiteId
+					+ '&ldkRefererTracking='
+					+ encodeURIComponent(readCookie(LDK_REFERER_TRACKING))
+					+ addUtmsParam() + addCustomLeadData(),
+			success : function(data) {
+				if (successCallback) {
+					if ($.isFunction(successCallback)) {
+						successCallback();
+					} else {
+						eval(successCallback);
+					}
+				}
+				// track google analytics conversion
+				trackGAEvent('Form', 'Conversion');
+				trackGAEvent('Form', 'Convertion'); // deprecado - mantenido por
+													// compatiblildad
+				fireNewLeadPixels();
+			},
+			dataType : "jsonp",
+			// TODO ldkTrackContactFormSerialized
+			contentType : 'application/x-www-form-urlencoded; charset=UTF-8',
+			async : true
+		});
 	}
 
+  console.log('Leadaki: se completó un formulario correctamente');
+  //si está leadaki instalado disparo los pixels cuanco completan el formulario
+  if (window.Leadaki && fireNewLeadPixels)
+  {
+    var params = new Map();
+    form.childNodes.forEach(function(item)
+    {
+    	item.childNodes.forEach(function(item_)
+    	{
+	        try
+	        {
+	          var input = item_.innerText.valueOf("field-element");
+	          if(input != undefined && input != "")
+	          {	 
+		        	if($('[name="'+base64_encode(input)+'"]').attr('type') == "text")
+		            {	
+		            	if($('[name="'+base64_encode(input)+'"]')[0].nodeName == "TEXTAREA")
+		            	{
+		            		params.set(input, $('[name="'+base64_encode(input)+'"]').text());
+		            	}
+		            	else
+		            	{
+		            		params.set(input, $('[name="'+base64_encode(input)+'"]').val());
+		            	}
+		            }	
+		
+		            if($('[name="'+base64_encode(input)+'"]').attr('type') == "email")
+		            {	
+		            	params.set(input, $('[name="'+base64_encode(input)+'"]').val());
+		            }	
+		            
+		            if($('[name="'+base64_encode(input)+'"]').attr('type') == "checkbox")
+		            {	
+		            	params.set(input, $('[name="'+base64_encode(input)+'"]:checked')[0].value);
+		            }	
+		            
+		            if($('[name="'+base64_encode(input)+'"]').attr('type') == "radio")
+		            {
+		            	params.set(input, $('[name="'+base64_encode(input)+'"]').val());
+		            }	
+		
+			        if($('[name="'+base64_encode(input)+'"]')[0].nodeName == "SELECT")
+			        {
+			        	params.set(input, $('[name="'+base64_encode(input)+'"]')[0].value);
+			        }	
+		        }
+	        }
+	        catch(e)
+	        {
+	        	//	console.log("Error:::::" + e);
+	        }
+    	});
+    });	
+  ldkTrackContactFormSerialized2(params, successCallback);
+  //	console.log('Leadaki: disparando pixels de conversión');
+  //	fireNewLeadPixels()
+  }
 }
