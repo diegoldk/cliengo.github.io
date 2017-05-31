@@ -19,69 +19,30 @@ if(gclid){
 	console.log('Leadaki: no se encontró ningún gclid');
 }
 
-
+function successCallback() {
+	console.log("success");
+}
 
 //Disparado automático de pixels si está el script de Leadaki
 window.instapageFormSubmitSuccess = function( form )
 {
-	//	TODO cambiar a metodo de staticScript
-	  function ldkTrackContactFormSerialized2(formSerialized, successCallback) {
-		var dataParams = "";
-		formSerialized.forEach(function(k, s) {
-			dataParams += s + "=" + k + "&";
-		});
-
-		// TODO
-		// ldkTrackContactFormSerialized(dataParams, successCallback);
-
-		$.ajax({
-			type : 'POST',
-			url : 'https://app.cliengo.com/Siteless/contactSave',
-			data : dataParams + '&ldkCompanyId=' + Leadaki.companyId
-					+ '&ldkWebsiteId=' + Leadaki.websiteId
-					+ '&ldkRefererTracking='
-					+ encodeURIComponent(readCookie(LDK_REFERER_TRACKING))
-					+ addUtmsParam() + addCustomLeadData(),
-			success : function(data) {
-				if (successCallback) {
-					if ($.isFunction(successCallback)) {
-						successCallback();
-					} else {
-						eval(successCallback);
-					}
-				}
-				// track google analytics conversion
-				trackGAEvent('Form', 'Conversion');
-				trackGAEvent('Form', 'Convertion'); // deprecado - mantenido por
-													// compatiblildad
-				fireNewLeadPixels();
-			},
-			dataType : "jsonp",
-			// TODO ldkTrackContactFormSerialized
-			contentType : 'application/x-www-form-urlencoded; charset=UTF-8',
-			async : true
-		});
-	}
-
   console.log('Leadaki: se completó un formulario correctamente');
   //si está leadaki instalado disparo los pixels cuanco completan el formulario
   if (window.Leadaki && fireNewLeadPixels)
   {
-    var params = new Map();
-    [].slice.call(form).forEach(function (el, i) {
-        console.log(i);
-    	console.log(el);
-    	console.log(el.value);
-    	
+    var params = {};
+
+    [].slice.call(form).forEach(function (el, i) {    	
     	try{
-    		params.set(base64_decode(el.name),el.value);
+    		params[base64_decode(el.name)] = el.value;
     	}catch(e){
     		console.log(e);
     	}
-    	
     });
-    ldkTrackContactFormSerialized2(params, successCallback);
-// console.log('Leadaki: disparando pixels de conversión');
-    fireNewLeadPixels()
+    
+    ldkTrackContactFormSerialized2($.param(params), successCallback);
+    
+//	console.log('Leadaki: disparando pixels de conversión');
+//	fireNewLeadPixels()
   }
 }
