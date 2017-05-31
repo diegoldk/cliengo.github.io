@@ -19,16 +19,30 @@ if(gclid){
 	console.log('Leadaki: no se encontró ningún gclid');
 }
 
-
+function successCallback() {
+	console.log("success");
+}
 
 //Disparado automático de pixels si está el script de Leadaki
 window.instapageFormSubmitSuccess = function( form )
 {
-	console.log('Leadaki: se completó un formulario correctamente');
-	//si está leadaki instalado disparo los pixels cuanco completan el formulario
-	if (window.Leadaki && fireNewLeadPixels){
-		console.log('Leadaki: disparando pixels de conversión');
-		fireNewLeadPixels()
-	}
+  console.log('Leadaki: se completó un formulario correctamente');
+  //si está leadaki instalado disparo los pixels cuanco completan el formulario
+  if (window.Leadaki && fireNewLeadPixels)
+  {
+    var params = {};
 
+    [].slice.call(form).forEach(function (el, i) {    	
+    	try{
+    		params[base64_decode(el.name)] = el.value;
+    	}catch(e){
+    		console.log(e);
+    	}
+    });
+    
+    ldkTrackContactFormSerialized($.param(params), successCallback);
+    
+//	console.log('Leadaki: disparando pixels de conversión');
+//	fireNewLeadPixels()
+  }
 }
