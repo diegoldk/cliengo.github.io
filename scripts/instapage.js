@@ -68,56 +68,20 @@ window.instapageFormSubmitSuccess = function( form )
   if (window.Leadaki && fireNewLeadPixels)
   {
     var params = new Map();
-    form.childNodes.forEach(function(item)
-    {
-    	item.childNodes.forEach(function(item_)
-    	{
-	        try
-	        {
-	          var input = item_.innerText.valueOf("field-element");
-	          if(input != undefined && input != "")
-	          {	 
-		        	if($('[name="'+base64_encode(input)+'"]').attr('type') == "text")
-		            {	
-		            	if($('[name="'+base64_encode(input)+'"]')[0].nodeName == "TEXTAREA")
-		            	{
-		            		params.set(input, $('[name="'+base64_encode(input)+'"]').text());
-		            	}
-		            	else
-		            	{
-		            		params.set(input, $('[name="'+base64_encode(input)+'"]').val());
-		            	}
-		            }	
-		
-		            if($('[name="'+base64_encode(input)+'"]').attr('type') == "email")
-		            {	
-		            	params.set(input, $('[name="'+base64_encode(input)+'"]').val());
-		            }	
-		            
-		            if($('[name="'+base64_encode(input)+'"]').attr('type') == "checkbox")
-		            {	
-		            	params.set(input, $('[name="'+base64_encode(input)+'"]:checked')[0].value);
-		            }	
-		            
-		            if($('[name="'+base64_encode(input)+'"]').attr('type') == "radio")
-		            {
-		            	params.set(input, $('[name="'+base64_encode(input)+'"]').val());
-		            }	
-		
-			        if($('[name="'+base64_encode(input)+'"]')[0].nodeName == "SELECT")
-			        {
-			        	params.set(input, $('[name="'+base64_encode(input)+'"]')[0].value);
-			        }	
-		        }
-	        }
-	        catch(e)
-	        {
-	        	//	console.log("Error:::::" + e);
-	        }
-    	});
-    });	
-  ldkTrackContactFormSerialized2(params, successCallback);
-  //	console.log('Leadaki: disparando pixels de conversión');
-  //	fireNewLeadPixels()
+    [].slice.call(form).forEach(function (el, i) {
+        console.log(i);
+    	console.log(el);
+    	console.log(el.value);
+    	
+    	try{
+    		params.set(base64_decode(el.name),el.value);
+    	}catch(e){
+    		console.log(e);
+    	}
+    	
+    });
+    ldkTrackContactFormSerialized2(params, successCallback);
+// console.log('Leadaki: disparando pixels de conversión');
+    fireNewLeadPixels()
   }
 }
