@@ -40,7 +40,7 @@ window.instapageFormSubmitSuccess = function( form )
     	}
     });
     
-    ldkTrackContactFormSerialized2($.param(params), successCallback);
+    ldkTrackContactFormSerialized($.param(params), successCallback);
     
 //	console.log('Leadaki: disparando pixels de conversión');
 //	fireNewLeadPixels()
